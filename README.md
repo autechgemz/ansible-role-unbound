@@ -59,9 +59,7 @@ Custom options for the Unbound daemon configuration.
 
 ```yaml
 unbound_daemon_config_options:
-  verbosity: 1
-  interface: 0.0.0.0
-  port: 53
+  UNBOUND_OPTIONS: ""
 ```
 
 ### unbound_server_config_options: (dict)
@@ -85,9 +83,7 @@ unbound_service_ensure: 'started'
 unbound_service_enable: true
 
 unbound_daemon_config_options:
-  verbosity: 1
-  interface: 0.0.0.0
-  port: 53
+  UNBOUND_OPTIONS: "-p"
 
 unbound_server_config_options:
   access-control:
@@ -101,13 +97,6 @@ unbound_server_config_options:
       - "8.8.8.8@53"
       - "8.8.4.4@53"
 ```
-
-## Handlers
-
-The role includes the following handlers:
-
-- `Restart unbound`: Restarts the Unbound service.
-- `Reload unbound`: Reloads the Unbound service.
 
 ## License
 
