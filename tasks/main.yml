@@ -1,0 +1,24 @@
+---
+
+- name: Main tasks
+  tags:
+    - unbound_install
+    - unbound_config
+    - unbound_service
+    - unbound
+  block:
+    - name: Load dependency variables
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - "{{ ansible_os_family }}.yml"
+    - name: Install tasks
+      ansible.builtin.import_tasks: install.yml
+    - name: Configration tasks
+      ansible.builtin.import_tasks: config.yml
+    - name: Service tasks
+      ansible.builtin.import_tasks: service.yml
+  rescue:
+    - name: Print Error
+      ansible.builtin.debug:
+        msg: "Unsupport platform or error occurred due to some reason."
+      failed_when: true

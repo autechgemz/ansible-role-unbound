@@ -1,0 +1,14 @@
+---
+
+- name: Service tasks
+  tags:
+    - unbound_service
+    - unbound
+  become: true
+  block:
+    - name: Manage service
+      ansible.builtin.service:
+        name: "{{ unbound_service_name }}"
+        state: "{{ unbound_service_ensure }}"
+        enabled: "{{ unbound_service_enable }}"
+      when: not ansible_check_mode

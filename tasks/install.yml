@@ -1,0 +1,24 @@
+---
+
+- name: Install tasks
+  tags:
+    - unbound_install
+    - unbound
+  become: true
+
+  block:
+    - name: Install unbound package
+      ansible.builtin.yum:
+        name: "{{ unbound_package_name }}"
+        state: "{{ unbound_package_ensure }}"
+        update_cache: true
+      register: unbound_install
+      when: ansible_os_family == "RedHat"
+
+    - name: Install unbound package
+      ansible.builtin.apt:
+        name: "{{ unbound_package_name }}"
+        state: "{{ unbound_package_ensure }}"
+        update_cache: true
+      register: unbound_install
+      when: ansible_os_family == "Debian"

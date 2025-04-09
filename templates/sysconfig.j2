@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+{% if unbound_daemon_config_merged is defined and unbound_daemon_config_merged %}
+{%   for key, value in unbound_daemon_config_merged.items() %}
+{{     key }}={{ value }}
+{%   endfor %}
+{% endif %}

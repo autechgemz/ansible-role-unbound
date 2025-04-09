@@ -1,0 +1,13 @@
+---
+
+- name: Reload unbound
+  ansible.builtin.systemd:
+    name: "{{ unbound_service_name }}"
+    state: reloaded
+  when: not ansible_check_mode
+
+- name: Restart unbound
+  ansible.builtin.systemd:
+    name: "{{ unbound_service_name }}"
+    state: restarted
+  when: not ansible_check_mode

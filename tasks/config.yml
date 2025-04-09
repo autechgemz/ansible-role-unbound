@@ -1,0 +1,58 @@
+---
+
+- name: Configration tasks
+  tags:
+    - unbound_config
+    - unbound
+  become: true
+  block:
+    - name: Default daemon configration
+      ansible.builtin.set_fact:
+        unbound_daemon_config_parsed: "{{ unbound_daemon_config_default | from_yaml }}"
+    - name: Default server configration
+      ansible.builtin.set_fact:
+        unbound_server_config_parsed: "{{ unbound_server_config_default | from_yaml }}"
+
+    - name: Debug default daemon variables
+      ansible.builtin.debug:
+        msg: "unbound_daemon_config_parsed: {{ unbound_daemon_config_parsed }}"
+      when: unbound_debug is defined and unbound_debug
+
+    - name: Debug default server variables
+      ansible.builtin.debug:
+        msg: "unbound_server_config_parsed: {{ unbound_server_config_parsed }}"
+      when: unbound_debug is defined and unbound_debug
+
+    - name: Merge daemon configration
+      ansible.builtin.set_fact:
+        unbound_daemon_config_merged: "{{ unbound_daemon_config_parsed | ansible.builtin.combine(unbound_daemon_config_options, recursive=True) }}"
+    - name: Merge server configration
+      ansible.builtin.set_fact:
+        unbound_server_config_merged: "{{ unbound_server_config_parsed | ansible.builtin.combine(unbound_server_config_options, recursive=True) }}"
+
+    - name: Debug daemon variables
+      ansible.builtin.debug:
+        msg: "unbound_daemon_config_merged: {{ unbound_daemon_config_merged }}"
+      when: unbound_debug is defined and unbound_debug
+
+    - name: Debug server variables
+      ansible.builtin.debug:
+        msg: "unbound_server_config_merged: {{ unbound_server_config_merged }}"
+      when: unbound_debug is defined and unbound_debug
+
+    - name: Generate daemon config file
+      ansible.builtin.template:
+        src: sysconfig.j2
+        dest: "{{ unbound_daemon_config_file }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart unbound
+    - name: Generate server config file
+      ansible.builtin.template:
+        src: unbound.conf.j2
+        dest: "{{ unbound_server_config_file }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart unbound

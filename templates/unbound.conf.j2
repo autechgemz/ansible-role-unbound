@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+{% if unbound_server_config_merged is defined and unbound_server_config_merged %}
+{%   for section, settings in unbound_server_config_merged.items() %}
+{%     if settings is mapping and settings | length > 0 %}
+{{ section }}:
+{%       for key, value in settings.items() %}
+{%         if value is not none and value is iterable and (value is not string and value is not mapping) %}
+{%           for item in value %}
+  {{ key }}: {{ item | string }}
+{%           endfor %}
+{%         elif value is not none %}
+  {{ key }}: {{ value | string }}
+{%         endif %}
+{%       endfor %}
+{%     elif settings is iterable and (settings is not string and settings is not mapping) and settings | length > 0 %}
+{%       for item in settings %}
+{{ section }}: "{{ item }}"
+{%       endfor %}
+{%     elif settings is not none %}
+{{ section }}: {{ settings | string }}
+{%     endif %}
+{%   endfor %}
+{% endif %}

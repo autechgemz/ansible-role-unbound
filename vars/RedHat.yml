@@ -1,0 +1,65 @@
+---
+
+unbound_package_name:
+  - unbound
+
+unbound_service_name: 'unbound'
+
+unbound_daemon_config_file: '/etc/sysconfig/unbound'
+
+unbound_server_config_file: '/etc/unbound/unbound.conf'
+
+unbound_daemon_config_default:
+  UNBOUND_OPTIONS: ''
+
+unbound_server_config_default: |
+  include:
+    - "/etc/unbound/local.d/*.conf"
+    - "/etc/unbound/keys.d/*.conf"
+    - "/etc/unbound/conf.d/*.conf"
+  server:
+    port: '53'
+    verbosity: '1'
+    interface: '0.0.0.0'
+    log-queries: 'yes'
+    log-time-ascii: 'yes'
+    use-syslog: 'yes'
+    hide-identity: 'yes'
+    hide-version: 'yes'
+    private-address: '::/0'
+    do-ip4: 'yes'
+    do-ip6: 'yes'
+    do-udp: 'yes'
+    do-tcp: 'yes'
+    qname-minimisation: 'no'
+    rrset-roundrobin: 'yes'
+    minimal-responses: 'no'
+    prefetch: 'no'
+    use-caps-for-id: 'yes'
+    harden-glue: 'yes'
+    harden-below-nxdomain: 'no'
+    harden-dnssec-stripped: 'yes'
+    harden-referral-path: 'yes'
+    statistics-interval: 0
+    statistics-cumulative: 'no'
+    extended-statistics: 'yes'
+    access-control:
+      - 0.0.0.0/0 refuse
+      - 169.254.0.0/16 deny     # Bogon
+      - 127.0.0.0/8 allow_snoop # Loopback
+      - 10.0.0.0/8 allow        # Class-A
+      - 172.16.0.0/12 allow     # Class-B
+      - 192.168.0.0/16 allow    # Class-C
+  forward-zone:
+      name: "."
+      forward-first: 'no'
+      forward-tls-upstream: 'no'
+      forward-addr:
+        - 8.8.8.8@53            # Google DNS primary
+        - 8.8.4.4@53            # Google DNS secondary
+        - 1.1.1.1@53            # CloudFlare primary
+        - 1.0.0.1@53            # CloudFlare secondary
+        - 9.9.9.9@53            # Quad9 primary
+        - 149.112.112.112@53    # Quad9 secondary
+  remote-control:
+    control-enable: 'no'
